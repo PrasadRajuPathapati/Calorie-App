@@ -1,0 +1,22 @@
+[
+  { "name": "dosa", "calories": 168 },
+  { "name": "masala dosa", "calories": 230 },
+  { "name": "plain dosa", "calories": 168 },
+  { "name": "idli", "calories": 39 },
+  { "name": "vada", "calories": 150 },
+  { "name": "medu vada", "calories": 97 },
+  { "name": "uttapam", "calories": 220 },
+  { "name": "onion uttapam", "calories": 210 },
+  { "name": "upma", "calories": 200 },
+  { "name": "pongal", "calories": 250 },
+  { "name": "sambar", "calories": 150 },
+  { "name": "rasam", "calories": 60 },
+  { "name": "lemon rice", "calories": 280 },
+  { "name": "curd rice", "calories": 300 },
+  { "name": "tamarind rice", "calories": 250 },
+  { "name": "bisibele bath", "calories": 350 },
+  { "name": "poha", "calories": 180 },
+  { "name": "appam", "calories": 120 },
+  { "name": "paniyaram", "calories": 60 },
+  { "name": "parotta", "calories": 210 }
+]

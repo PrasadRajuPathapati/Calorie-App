@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* NEW: CSS to prevent unwanted scrollbars, especially horizontal */
+html, body {
+  overflow-x: hidden; /* Prevents horizontal scrolling */
+  width: 100%;       /* Ensures content doesn't exceed viewport width */
+}
