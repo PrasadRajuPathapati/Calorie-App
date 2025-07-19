@@ -139,7 +139,7 @@ export default function Navbar() {
             className="absolute right-4 top-full mt-2
                        w-auto min-w-[180px] max-w-[250px]
                        bg-white rounded-lg shadow-xl py-2 z-50 border border-green-200
-                       md:w-48 md:bg-white/80"
+                       md:w-50 md:bg-white/80"
           >
             <div className="px-4 py-2 text-sm text-gray-700 border-b border-green-200">
               {userName ? `Hi, ${userName}` : 'Hello!'}
