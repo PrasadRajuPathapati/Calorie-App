@@ -9,7 +9,8 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs").promises;
+const fs = require("fs").promises; // Use fs.promises for async operations
+const axios = require("axios");
 
 // Import your Mongoose models
 const User = require("./models/user");
@@ -20,10 +21,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Serve static profile images
+// ✅ Serve static profile images (ONLY for local development or for pre-existing default images)
+// For user-uploaded images in production on Vercel, you need cloud storage.
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ Ensure uploads folder exists
+// ✅ Ensure uploads folder exists (primarily for local dev, Vercel functions don't persist locally)
 fs.access(path.join(__dirname, "uploads"), fs.constants.F_OK)
   .catch(async (e) => {
     if (e.code === 'ENOENT') {
@@ -111,9 +113,13 @@ const transporter = nodemailer.createTransport({
 });
 
 // 📌 Multer setup for profile picture uploads
+// Multer will still save to local /uploads temporarily for Vercel Serverless.
+// However, THIS LOCAL FILE WILL NOT PERSIST after the function ends.
+// For persistent storage, REPLACE THIS WITH CLOUD STORAGE UPLOAD LOGIC.
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    // In Vercel, this is a temporary /tmp directory, not persistent
+    cb(null, "/tmp/"); // Use /tmp for serverless functions
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -121,6 +127,7 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage });
+
 
 // ➡️ SIGNUP: store email+password, send OTP
 app.post("/signup", async (req, res) => {
@@ -262,33 +269,45 @@ app.post("/save-profile", upload.single("profilePic"), async (req, res) => {
     user.weight = weight ? parseFloat(weight) : undefined;
     user.activityLevel = activityLevel;
 
+    // --- IMPORTANT: CLOUD STORAGE INTEGRATION HERE FOR PROFILE PICS ---
     if (req.file) {
-        if (user.profilePic) {
-            const oldPath = path.join(__dirname, user.profilePic);
-            try {
-                await fs.unlink(oldPath);
-                console.log(`Deleted old profile pic: ${oldPath}`);
-            } catch (err) {
-                console.error(`Error deleting old profile pic ${oldPath}:`, err.message);
-            }
+        // STEP 1: UPLOAD THE FILE TO CLOUD STORAGE (e.g., Cloudinary, AWS S3)
+        // Example with a placeholder for Cloudinary:
+        // const uploadResult = await cloudinary.uploader.upload(req.file.path);
+        // const newProfilePicUrl = uploadResult.secure_url; // Get URL from cloud service
+
+        const newProfilePicUrl = `/uploads/${req.file.filename}`; // FOR LOCAL TESTING ONLY (WILL NOT PERSIST ON VERCEL)
+
+        // STEP 2: DELETE THE TEMPORARY LOCAL FILE (after uploading to cloud)
+        try {
+            await fs.unlink(req.file.path); // Delete file from /tmp
+            console.log(`Deleted temporary local file: ${req.file.path}`);
+        } catch (err) {
+            console.error(`Error deleting temporary local file ${req.file.path}:`, err.message);
         }
-        user.profilePic = `/uploads/${req.file.filename}`;
-        console.log('Saving new profilePic path to DB:', user.profilePic);
+
+        // STEP 3: If there was an old profile pic URL, delete it from cloud storage too
+        if (user.profilePic && user.profilePic.startsWith('http')) { // Assuming cloud URLs start with http
+            // const publicId = getPublicIdFromCloudinaryUrl(user.profilePic); // Implement this helper
+            // await cloudinary.uploader.destroy(publicId);
+            console.log(`Placeholder: Deleted old profile pic from cloud storage: ${user.profilePic}`);
+        }
+        user.profilePic = newProfilePicUrl; // Save the cloud URL (or temporary local URL)
+        console.log('Saving new profilePic URL to DB:', user.profilePic);
+
     } else if (removeProfilePic === 'true') {
-        if (user.profilePic) {
-            const oldPath = path.join(__dirname, user.profilePic);
-            try {
-                await fs.unlink(oldPath);
-                console.log(`Deleted profile pic on explicit removal request: ${oldPath}`);
-            } catch (err) {
-                console.error(`Error deleting old profile pic ${oldPath} on explicit removal:`, err.message);
-            }
+        // If there's a profile pic URL in DB, delete it from cloud storage
+        if (user.profilePic && user.profilePic.startsWith('http')) {
+            // const publicId = getPublicIdFromCloudinaryUrl(user.profilePic);
+            // await cloudinary.uploader.destroy(publicId);
+            console.log(`Placeholder: Deleted profile pic from cloud storage on explicit removal request: ${user.profilePic}`);
         }
-        user.profilePic = undefined;
+        user.profilePic = undefined; // Set to undefined to remove from DB
         console.log('Profile pic explicitly removed from DB.');
     } else {
       console.log('No new file and no remove flag. user.profilePic state remains unchanged in DB.');
     }
+    // --- END CLOUD STORAGE INTEGRATION NOTES ---
 
     await user.save();
     console.log('User saved to DB:', user);
@@ -421,7 +440,6 @@ app.post('/get-calories', async (req, res) => {
               category: category.split(',')[0].trim(),
               region: 'Open Food Facts Source',
               typicalServingSize: '100g',
-              // Initialize macros from Open Food Facts if available
               protein: product.nutriments && product.nutriments.proteins_100g ? Math.round(product.nutriments.proteins_100g) : 0,
               carbohydrates: product.nutriments && product.nutriments.carbohydrates_100g ? Math.round(product.nutriments.carbohydrates_100g) : 0,
               fats: product.nutriments && product.nutriments.fat_100g ? Math.round(product.nutriments.fat_100g) : 0
@@ -461,7 +479,7 @@ app.post('/api/log-food', authenticateToken, async (req, res) => {
   }
 
   try {
-    const food = await Food.findById(foodId); // Fetch full food details to get macros
+    const food = await Food.findById(foodId);
     if (!food) {
       return res.status(404).json({ success: false, message: "Food item not found." });
     }
@@ -488,14 +506,13 @@ app.post('/api/log-food', authenticateToken, async (req, res) => {
         name: food.name,
         caloriesPerServing: food.calories,
         quantity: quantity,
-        // NEW: Store macros per serving in the DailyLog food entry
-        proteinPerServing: food.protein,
+        proteinPerServing: food.protein, // Include macros from food document
         carbohydratesPerServing: food.carbohydrates,
         fatsPerServing: food.fats
       });
     }
 
-    await dailyLog.save(); // Pre-save hook will recalculate totalCalories and totalMacros
+    await dailyLog.save();
     res.json({ success: true, message: "Food logged successfully!", dailyLog });
 
   } catch (err) {
@@ -526,7 +543,7 @@ app.delete('/api/daily-log/:logId/foods/:foodEntryId', authenticateToken, async 
       return res.status(404).json({ success: false, message: "Food entry not found in this log." });
     }
 
-    await dailyLog.save(); // Pre-save hook will recalculate totalCalories and totalMacros
+    await dailyLog.save();
     res.json({ success: true, message: "Food entry deleted successfully!", dailyLog });
 
   } catch (err) {
@@ -536,7 +553,7 @@ app.delete('/api/daily-log/:logId/foods/:foodEntryId', authenticateToken, async 
 });
 
 
-// ✅ Endpoint to get daily food log for a user (includes populated macros)
+// ✅ Endpoint to get daily food log for a user
 app.get('/api/daily-log', authenticateToken, async (req, res) => {
   const userId = req.user.id;
   const dateParam = req.query.date;
@@ -548,22 +565,17 @@ app.get('/api/daily-log', authenticateToken, async (req, res) => {
   queryDate.setHours(0, 0, 0, 0);
 
   try {
-    // Populate foodId to ensure full food object is available for macro calculation
     const dailyLog = await DailyLog.findOne({ userId, date: queryDate });
 
     if (!dailyLog) {
       return res.json({ success: true, dailyLog: null, message: "No food logged for this date." });
     }
 
-    // Manually calculate total macros when retrieving, for robustness
-    // (This is a fallback/double-check if pre-save hook somehow missed it,
-    // but the pre-save hook should handle it when saving)
     let totalProtein = 0;
     let totalCarbohydrates = 0;
     let totalFats = 0;
 
-    // We iterate through foods here to ensure populated data is used for macro display,
-    // though the saved totalProtein/Carbohydrates/Fats should ideally be correct.
+    // Use the stored macros in the foodEntry sub-document
     dailyLog.foods.forEach(entry => {
         totalProtein += (entry.proteinPerServing || 0) * entry.quantity;
         totalCarbohydrates += (entry.carbohydratesPerServing || 0) * entry.quantity;
@@ -571,8 +583,8 @@ app.get('/api/daily-log', authenticateToken, async (req, res) => {
     });
 
     res.json({ success: true, dailyLog: {
-        ...dailyLog.toObject(), // Convert Mongoose document to plain object
-        totalProtein: Math.round(totalProtein), // Ensure rounded for display
+        ...dailyLog.toObject(),
+        totalProtein: Math.round(totalProtein),
         totalCarbohydrates: Math.round(totalCarbohydrates),
         totalFats: Math.round(totalFats)
     }, message: "Daily log fetched." });
@@ -583,27 +595,26 @@ app.get('/api/daily-log', authenticateToken, async (req, res) => {
   }
 });
 
-// ✅ NEW: Endpoint to get daily log history for a user
+// ✅ Endpoint to get daily log history for a user
 app.get('/api/daily-log/history', authenticateToken, async (req, res) => {
     const userId = req.user.id;
-    const days = parseInt(req.query.days || '7'); // Default to last 7 days
+    const days = parseInt(req.query.days || '7');
 
     const endDate = new Date();
-    endDate.setHours(0, 0, 0, 0); // Today, start of day
+    endDate.setHours(0, 0, 0, 0);
 
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - days);
-    startDate.setHours(0, 0, 0, 0); // N days ago, start of day
+    startDate.setHours(0, 0, 0, 0);
 
     try {
         const historyLogs = await DailyLog.find({
             userId,
             date: { $gte: startDate, $lte: endDate }
-        }).sort({ date: 1 }); // Sort by date ascending
+        }).sort({ date: 1 });
 
-        // Extract relevant data for history (date, totalCalories, totalProtein, etc.)
         const formattedHistory = historyLogs.map(log => ({
-            date: log.date.toISOString().split('T')[0], // YYYY-MM-DD
+            date: log.date.toISOString().split('T')[0],
             totalCalories: log.totalCalories,
             totalProtein: Math.round(log.totalProtein),
             totalCarbohydrates: Math.round(log.totalCarbohydrates),
