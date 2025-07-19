@@ -36,7 +36,7 @@ export default function Profile() {
 
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:5000/api/user/profile?email=${email}`, {
+        const res = await axios.get(`https://calorie-app-backend.onrender.com//api/user/profile?email=${email}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -50,7 +50,7 @@ export default function Profile() {
           setActivityLevel(user.activityLevel || "");
 
           if (user.profilePic) {
-            const fullProfilePicUrl = `http://localhost:5000${user.profilePic}`;
+            const fullProfilePicUrl = `https://calorie-app-backend.onrender.com${user.profilePic}`;
             setPreview(fullProfilePicUrl);
             setCurrentDbProfilePicPath(user.profilePic);
           } else {
@@ -81,7 +81,7 @@ export default function Profile() {
       setPreview(URL.createObjectURL(file));
     } else {
       setImage(null);
-      setPreview(currentDbProfilePicPath ? `http://localhost:5000${currentDbProfilePicPath}` : DEFAULT_PROFILE_PIC_FALLBACK);
+      setPreview(currentDbProfilePicPath ? `https://calorie-app-backend.onrender.com${currentDbProfilePicPath}` : DEFAULT_PROFILE_PIC_FALLBACK);
     }
   };
 
@@ -124,7 +124,7 @@ export default function Profile() {
     formData.append("activityLevel", activityLevel);
 
     try {
-      const res = await axios.post("http://localhost:5000/save-profile", formData, {
+      const res = await axios.post("https://calorie-app-backend.onrender.com/save-profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       if (res.data.success) {

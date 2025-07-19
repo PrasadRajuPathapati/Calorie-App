@@ -28,7 +28,7 @@ const Home = () => {
       }
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
+        const res = await axios.get(`https://calorie-app-backend.onrender.com//api/user/calorie-needs`, {
              headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data.success) {

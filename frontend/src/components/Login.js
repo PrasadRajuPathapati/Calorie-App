@@ -19,7 +19,7 @@ export default function Login() {
   e.preventDefault();
   setMessage({ type: "", text: "" });
   try {
-    const res = await axios.post("http://localhost:5000/login", { email, password });
+    const res = await axios.post("https://calorie-app-backend.onrender.com//login", { email, password });
     if (res.data.success) {
       setMessage({ type: "success", text: "✅ Login successful! Redirecting..." });
 
@@ -45,7 +45,7 @@ export default function Login() {
     e.preventDefault();
     setMessage({ type: "", text: "" });
     try {
-      const res = await axios.post("http://localhost:5000/send-reset-otp", { email });
+      const res = await axios.post("https://calorie-app-backend.onrender.com//send-reset-otp", { email });
       if (res.data.success) {
         setMessage({ type: "success", text: "📩 OTP sent to your email" });
         setStep("verifyReset");
@@ -67,7 +67,7 @@ export default function Login() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5000/reset-password", {
+      const res = await axios.post("https://calorie-app-backend.onrender.com//reset-password", {
         email,
         otp,
         newPass,

@@ -10,7 +10,7 @@ export default function ResetPassword() {
   const [message, setMessage] = useState("");
 
   const handleRequestOTP = async () => {
-    const res = await fetch("http://localhost:5000/api/request-reset", {
+    const res = await fetch("https://calorie-app-backend.onrender.com/api/request-reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -21,7 +21,7 @@ export default function ResetPassword() {
   };
 
   const handleVerifyOTP = async () => {
-    const res = await fetch("http://localhost:5000/api/verify-otp", {
+    const res = await fetch("https://calorie-app-backend.onrender.com/api/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
@@ -36,7 +36,7 @@ export default function ResetPassword() {
       setMessage("Passwords do not match");
       return;
     }
-    const res = await fetch("http://localhost:5000/api/reset-password", {
+    const res = await fetch("https://calorie-app-backend.onrender.com/api/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

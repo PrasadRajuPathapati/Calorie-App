@@ -57,13 +57,13 @@ export default function Navbar() {
       if (!email) return;
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:5000/api/user/profile?email=${email}`, {
+        const res = await axios.get(`https://calorie-app-backend.onrender.com//api/user/profile?email=${email}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data.success && res.data.user) {
           setUserName(res.data.user.name || "");
           if (res.data.user.profilePic) {
-            setUserProfilePic(`http://localhost:5000${res.data.user.profilePic}`);
+            setUserProfilePic(`https://calorie-app-backend.onrender.com/${res.data.user.profilePic}`);
           } else {
             setUserProfilePic(DEFAULT_PROFILE_PIC_FALLBACK);
           }

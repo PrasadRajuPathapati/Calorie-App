@@ -48,7 +48,7 @@ export default function LogFood() {
     if (!token || !userEmail) return;
 
     try {
-      const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
+      const goalRes = await axios.get(`https://calorie-app-backend.onrender.com//api/user/calorie-needs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (goalRes.data.success) {
@@ -57,7 +57,7 @@ export default function LogFood() {
         setMessage({ type: 'error', text: goalRes.data.message || 'Failed to fetch calorie goal.' });
       }
 
-      const logRes = await axios.get(`http://localhost:5000/api/daily-log`, {
+      const logRes = await axios.get(`https://calorie-app-backend.onrender.com//api/daily-log`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { date: new Date().toISOString() }
       });
@@ -88,7 +88,7 @@ export default function LogFood() {
 
     if (term.length >= 1) {
       try {
-        const res = await axios.get(`http://localhost:5000/api/foods?search=${term}`);
+        const res = await axios.get(`https://calorie-app-backend.onrender.com//api/foods?search=${term}`);
         if (res.data.success) {
           setSearchResults(res.data.foods);
           setShowDropdown(true);
@@ -124,7 +124,7 @@ export default function LogFood() {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/log-food`,
+        `https://calorie-app-backend.onrender.com//api/log-food`,
         { foodId: selectedFoodId, quantity: quantity, date: new Date().toISOString() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -162,7 +162,7 @@ export default function LogFood() {
 
     try {
       const res = await axios.delete(
-        `http://localhost:5000/api/daily-log/${dailyLog._id}/foods/${foodEntryId}`,
+        `https://calorie-app-backend.onrender.com//api/daily-log/${dailyLog._id}/foods/${foodEntryId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

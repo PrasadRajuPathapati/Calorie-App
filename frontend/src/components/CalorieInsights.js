@@ -24,7 +24,7 @@ export default function CalorieInsights() {
     if (!token || !userEmail) return;
 
     try {
-      const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
+      const goalRes = await axios.get(`https://calorie-app-backend.onrender.com//api/user/calorie-needs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (goalRes.data.success) {
@@ -33,7 +33,7 @@ export default function CalorieInsights() {
         setMessage({ type: 'error', text: goalRes.data.message || 'Failed to fetch calorie goal.' });
       }
 
-      const todayLogRes = await axios.get(`http://localhost:5000/api/daily-log`, {
+      const todayLogRes = await axios.get(`https://calorie-app-backend.onrender.com//api/daily-log`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { date: new Date().toISOString() }
       });
@@ -43,7 +43,7 @@ export default function CalorieInsights() {
         setTodayLog(null);
       }
 
-      const historyRes = await axios.get(`http://localhost:5000/api/daily-log/history?days=7`, {
+      const historyRes = await axios.get(`https://calorie-app-backend.onrender.com//api/daily-log/history?days=7`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (historyRes.data.success && historyRes.data.history) {
