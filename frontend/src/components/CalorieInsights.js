@@ -17,8 +17,6 @@ export default function CalorieInsights() {
 
   useEffect(() => {
     if (!token || !userEmail) {
-      // Message is not directly displayed in this file, but navigate handles redirection.
-      // setMessage({ type: 'error', text: 'Authentication required. Redirecting to login.' }); // Could add this for user feedback
       navigate('/login');
     }
   }, [token, userEmail, navigate]);
@@ -27,6 +25,7 @@ export default function CalorieInsights() {
     if (!token || !userEmail) return;
 
     try {
+      // 1. Fetch Daily Calorie Goal
       const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -36,6 +35,7 @@ export default function CalorieInsights() {
         setMessage({ type: 'error', text: goalRes.data.message || 'Failed to fetch calorie goal.' });
       }
 
+      // 2. Fetch Today's Log
       const todayLogRes = await axios.get(`http://localhost:5000/api/daily-log`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { date: new Date().toISOString() }
@@ -46,6 +46,7 @@ export default function CalorieInsights() {
         setTodayLog(null);
       }
 
+      // 3. Fetch Historical Logs (e.g., last 7 days)
       const historyRes = await axios.get(`http://localhost:5000/api/daily-log/history?days=7`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -90,6 +91,7 @@ export default function CalorieInsights() {
       return "You're right on track with your calorie goal today! Great job!";
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col">

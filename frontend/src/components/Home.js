@@ -50,7 +50,7 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col items-center justify-between px-4 py-2">
       {/* Navbar is handled globally by App.js */}
 
-      {/* Date and Time Display below the navbar (assuming this is rendered by Navbar or in App.js) */}
+      {/* Date and Time Display below the navbar */}
       {/* If this div is intended to be part of Home.js and below the global Navbar, keep it. */}
       {/* Assuming this comes from Navbar.js or App.js, it's not directly in Home.js's scope for this error fix. */}
 
