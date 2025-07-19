@@ -3,8 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from './CircularProgressBar';
 import { PlusCircle, Utensils, Trash2 } from 'lucide-react';
-// logo import is removed, as Navbar is global now
-// import logo from "../assets/logo.png"; // REMOVED
 
 export default function LogFood() {
   const navigate = useNavigate();
@@ -26,16 +24,14 @@ export default function LogFood() {
 
   const token = localStorage.getItem('token');
   const userEmail = localStorage.getItem('email');
-  const userName = localStorage.getItem("name"); // Used for context, but not displayed in navbar anymore
+  // Removed: const userName = localStorage.getItem("name"); // Not used in this component
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!token || !userEmail) {
       navigate('/login');
     }
   }, [token, userEmail, navigate]);
 
-  // Handle clicks outside the search input/dropdown to close the dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchInputRef.current && !searchInputRef.current.contains(event.target)) {
@@ -52,7 +48,7 @@ export default function LogFood() {
     if (!token || !userEmail) return;
 
     try {
-      const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, { // No email in query
+      const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (goalRes.data.success) {
@@ -192,8 +188,6 @@ export default function LogFood() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col items-center p-4">
-      {/* REMOVED: Navbar code */}
-      
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center p-4">
         <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -329,9 +323,9 @@ export default function LogFood() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="text-center py-4 mt-8 text-green-900/70 text-sm border-t border-white/40 bg-green-200/30 backdrop-blur-md">
-        © {new Date().getFullYear()} CalorieApp. All rights reserved.
+      {/* Footer - Copyright text removed */}
+      <footer className="text-center py-4 mt-8 text-green-900/70 text-sm border-t border-white/40 bg-green-200/30 backdrop-blur-md w-full">
+        {/* Removed: © {new Date().getFullYear()} CalorieApp. All rights reserved. */}
       </footer>
     </div>
   );

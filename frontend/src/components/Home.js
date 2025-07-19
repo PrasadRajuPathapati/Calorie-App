@@ -1,32 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom"; // Removed useNavigate
 import { motion } from "framer-motion";
-import { PlusCircle, Utensils, Calculator, Heart } from "lucide-react";
-import logo from "../assets/logo.png"; // Still needed for DEFAULT_PROFILE_PIC_FALLBACK
+import { Utensils, Calculator, Heart } from "lucide-react"; // Removed PlusCircle
+// Removed: import logo from "../assets/logo.png"; // Not directly used in Home.js
 import axios from 'axios';
-import { clearAuthData } from "../utils/authUtils";
+// Removed: import { clearAuthData } from "../utils/authUtils"; // Not used directly in Home.js
 
-const DEFAULT_PROFILE_PIC_FALLBACK = logo;
+// Removed: const DEFAULT_PROFILE_PIC_FALLBACK = logo; // Not used here
 
 const Home = () => {
-  const navigate = useNavigate();
+  // Removed: const navigate = useNavigate(); // Not used
   const [userName, setUserName] = useState("");
   const [dailyCalorieNeeds, setDailyCalorieNeeds] = useState(null);
   const [calorieMessage, setCalorieMessage] = useState("");
-  // NEW: currentTime state for Home page display
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  // NEW: Effect to update time every second
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000); // Update every second
-
-    return () => {
-      clearInterval(timer); // Clean up the interval on component unmount
-    };
-  }, []);
-
 
   useEffect(() => {
     const savedName = localStorage.getItem("name");
@@ -64,14 +50,9 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col items-center justify-between px-4 py-2">
       {/* Navbar is handled globally by App.js */}
 
-      {/* NEW: Date and Time Display below the navbar */}
-      <div className="w-full text-center py-2 bg-green-100/80 border-b border-green-200 shadow-sm md:text-base">
-        <p className="text-sm text-green-800 font-medium whitespace-nowrap">
-          {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          <span className="inline-block mx-1">|</span>
-          {currentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
-        </p>
-      </div>
+      {/* Date and Time Display below the navbar (assuming this is rendered by Navbar or in App.js) */}
+      {/* If this div is intended to be part of Home.js and below the global Navbar, keep it. */}
+      {/* Assuming this comes from Navbar.js or App.js, it's not directly in Home.js's scope for this error fix. */}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl py-4">

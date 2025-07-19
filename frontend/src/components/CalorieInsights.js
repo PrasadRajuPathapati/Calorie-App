@@ -2,10 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from './CircularProgressBar';
-// logo import is removed, as Navbar is global now
-// import logo from "../assets/logo.png"; // REMOVED
-// ChevronLeft is still needed for the local back button, but not for navbar
-
+import { ChevronLeft } from 'lucide-react';
 import { motion } from "framer-motion";
 
 export default function CalorieInsights() {
@@ -13,13 +10,15 @@ export default function CalorieInsights() {
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(0);
   const [todayLog, setTodayLog] = useState(null);
   const [historyLogs, setHistoryLogs] = useState([]);
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [message, setMessage] = useState({ type: '', text: '' }); // Keep message state, but ensure it's displayed
 
   const token = localStorage.getItem('token');
   const userEmail = localStorage.getItem('email');
 
   useEffect(() => {
     if (!token || !userEmail) {
+      // Message is not directly displayed in this file, but navigate handles redirection.
+      // setMessage({ type: 'error', text: 'Authentication required. Redirecting to login.' }); // Could add this for user feedback
       navigate('/login');
     }
   }, [token, userEmail, navigate]);
@@ -28,7 +27,6 @@ export default function CalorieInsights() {
     if (!token || !userEmail) return;
 
     try {
-      // 1. Fetch Daily Calorie Goal
       const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -38,7 +36,6 @@ export default function CalorieInsights() {
         setMessage({ type: 'error', text: goalRes.data.message || 'Failed to fetch calorie goal.' });
       }
 
-      // 2. Fetch Today's Log
       const todayLogRes = await axios.get(`http://localhost:5000/api/daily-log`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { date: new Date().toISOString() }
@@ -49,7 +46,6 @@ export default function CalorieInsights() {
         setTodayLog(null);
       }
 
-      // 3. Fetch Historical Logs (e.g., last 7 days)
       const historyRes = await axios.get(`http://localhost:5000/api/daily-log/history?days=7`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -95,13 +91,15 @@ export default function CalorieInsights() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col">
-      {/* REMOVED: Navbar code */}
-
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center p-4">
+        {message.text && ( // NEW: Display the message
+          <p className={`mb-4 text-center font-medium ${message.type === 'error' ? 'text-red-600' : 'text-green-700'}`}>
+            {message.text}
+          </p>
+        )}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,7 +146,7 @@ export default function CalorieInsights() {
 
         </motion.div>
 
-        {/* Historical Data Section (Optional: add Chart.js here for visualization) */}
+        {/* Historical Data Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
