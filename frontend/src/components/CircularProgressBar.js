@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from './CircularProgressBar';
-import { ChevronLeft } from 'lucide-react';
 import { motion } from "framer-motion";
 
 export default function CalorieInsights() {

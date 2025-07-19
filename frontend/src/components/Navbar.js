@@ -12,7 +12,7 @@ export default function Navbar() {
   const [userName, setUserName] = useState("");
   const [userProfilePic, setUserProfilePic] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [ setCurrentTime] = useState(new Date());
 
   const profileMenuRef = useRef(null);
   const dropdownRef = useRef(null);
