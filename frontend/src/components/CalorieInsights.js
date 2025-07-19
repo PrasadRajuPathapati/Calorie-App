@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from './CircularProgressBar';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react'; // Keep ChevronLeft, now explicitly used
 import { motion } from "framer-motion";
 
 export default function CalorieInsights() {
@@ -25,7 +25,6 @@ export default function CalorieInsights() {
     if (!token || !userEmail) return;
 
     try {
-      // 1. Fetch Daily Calorie Goal
       const goalRes = await axios.get(`http://localhost:5000/api/user/calorie-needs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -35,7 +34,6 @@ export default function CalorieInsights() {
         setMessage({ type: 'error', text: goalRes.data.message || 'Failed to fetch calorie goal.' });
       }
 
-      // 2. Fetch Today's Log
       const todayLogRes = await axios.get(`http://localhost:5000/api/daily-log`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { date: new Date().toISOString() }
@@ -46,7 +44,6 @@ export default function CalorieInsights() {
         setTodayLog(null);
       }
 
-      // 3. Fetch Historical Logs (e.g., last 7 days)
       const historyRes = await axios.get(`http://localhost:5000/api/daily-log/history?days=7`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -97,8 +94,8 @@ export default function CalorieInsights() {
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col">
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center p-4">
-        {message.text && ( // Fix: Added message display
-          <p className={`mb-4 text-center font-medium ${message.type === 'error' ? 'text-red-600' : (message.type === 'info' ? 'text-blue-600' : 'text-green-700')}`}>
+        {message.text && (
+          <p className={`mb-4 text-center font-medium ${message.type === 'error' ? 'text-red-600' : 'text-green-700'}`}>
             {message.text}
           </p>
         )}

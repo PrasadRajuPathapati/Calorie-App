@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from './CircularProgressBar';
 import { PlusCircle, Utensils, Trash2 } from 'lucide-react';
 
-export default function LogFood() { // This is the first and correct default export
+export default function LogFood() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -24,6 +24,7 @@ export default function LogFood() { // This is the first and correct default exp
 
   const token = localStorage.getItem('token');
   const userEmail = localStorage.getItem('email');
+  // Removed: const userName = localStorage.getItem("name"); // Not used in this component
 
   useEffect(() => {
     if (!token || !userEmail) {
