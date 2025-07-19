@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import CircularProgressBar from './CircularProgressBar';
 import { PlusCircle, Utensils, Trash2 } from 'lucide-react';
 
-export default function LogFood() {
+export default function LogFood() { // This is the first and correct default export
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -24,7 +24,6 @@ export default function LogFood() {
 
   const token = localStorage.getItem('token');
   const userEmail = localStorage.getItem('email');
-  // Removed: const userName = localStorage.getItem("name"); // Not used in this component
 
   useEffect(() => {
     if (!token || !userEmail) {
@@ -323,9 +322,9 @@ export default function LogFood() {
         </div>
       </div>
 
-      {/* Footer - Copyright text removed */}
+      {/* Footer */}
       <footer className="text-center py-4 mt-8 text-green-900/70 text-sm border-t border-white/40 bg-green-200/30 backdrop-blur-md w-full">
-        {/* Removed: © {new Date().getFullYear()} CalorieApp. All rights reserved. */}
+        © {new Date().getFullYear()} CalorieApp. All rights reserved.
       </footer>
     </div>
   );

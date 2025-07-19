@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Keep useNavigate
 import { motion } from "framer-motion";
 import logo from "../assets/logo.png";
 import { clearAuthData } from "../utils/authUtils";
@@ -8,18 +8,15 @@ import axios from 'axios';
 const DEFAULT_PROFILE_PIC_FALLBACK = logo;
 
 export default function Navbar() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Keep useNavigate and use it in handleSignOut
   const [userName, setUserName] = useState("");
   const [userProfilePic, setUserProfilePic] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  // REMOVED: currentTime state
-  // const [currentTime, setCurrentTime] = useState(new Date()); 
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const profileMenuRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  // REMOVED: Effect to update time every second
-  /*
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -29,9 +26,7 @@ export default function Navbar() {
       clearInterval(timer);
     };
   }, []);
-  */
 
-  // Handle clicks outside the profile menu to close it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -47,7 +42,6 @@ export default function Navbar() {
     };
   }, [profileMenuRef, dropdownRef]);
 
-  // Fetch user name and profile pic on component mount/reload
   useEffect(() => {
     const savedName = localStorage.getItem("name");
     if (savedName) {
@@ -84,7 +78,7 @@ export default function Navbar() {
 
   const handleSignOut = () => {
     clearAuthData();
-    window.location.href = '/login';
+    navigate('/login', { replace: true }); // FIX: Use navigate from react-router-dom
   };
 
   const toggleProfileMenu = () => {
@@ -98,17 +92,9 @@ export default function Navbar() {
         <Link to="/home" className="flex items-center">
           <img src={logo} alt="Logo" className="h-10 w-10 rounded-full mr-2" />
           <div className="flex flex-col justify-center">
-            <h1 className="text-2xl md:text-3xl font-extrabold text-green-900 drop-shadow-sm leading-tight mb-0"> {/* Adjusted mb-1 to mb-0 */}
+            <h1 className="text-2xl md:text-3xl font-extrabold text-green-900 drop-shadow-sm leading-tight mb-0">
               CalorieApp
             </h1>
-            {/* REMOVED: Date and Time Display from here */}
-            {/*
-            <p className="text-xs md:text-sm text-green-700 font-medium whitespace-nowrap">
-              {currentTime.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-              <span className="inline-block mx-1">|</span>
-              {currentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
-            </p>
-            */}
           </div>
         </Link>
       </div>
@@ -139,7 +125,7 @@ export default function Navbar() {
             className="absolute right-4 top-full mt-2
                        w-auto min-w-[180px] max-w-[250px]
                        bg-white rounded-lg shadow-xl py-2 z-50 border border-green-200
-                       md:w-50 md:bg-white/80"
+                       md:w-48 md:bg-white/80"
           >
             <div className="px-4 py-2 text-sm text-gray-700 border-b border-green-200">
               {userName ? `Hi, ${userName}` : 'Hello!'}

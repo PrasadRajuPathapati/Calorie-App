@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Removed useNavigate
 import { motion } from "framer-motion";
 import { Utensils, Calculator, Heart } from "lucide-react"; // Removed PlusCircle
-// Removed: import logo from "../assets/logo.png"; // Not directly used in Home.js
+// Removed: import logo from "../assets/assets/logo.png"; // Not directly used in Home.js
 import axios from 'axios';
 // Removed: import { clearAuthData } from "../utils/authUtils"; // Not used directly in Home.js
 
@@ -48,11 +48,11 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col items-center justify-between px-4 py-2">
-      {/* Navbar is handled globally by App.js */}
-
-      {/* Date and Time Display below the navbar */}
-      {/* If this div is intended to be part of Home.js and below the global Navbar, keep it. */}
-      {/* Assuming this comes from Navbar.js or App.js, it's not directly in Home.js's scope for this error fix. */}
+      {/* Date and Time Display below the navbar (this div will be added in App.js directly below the Navbar component) */}
+      {/* If you intend for this section to be rendered only on Home.js and below the global Navbar,
+          then it needs to be explicitly part of App.js's rendering or wrapped */}
+      {/* For now, assuming this specific div content is placed outside the Home component's direct return block
+          if it's truly "below the navbar" but not inside Home.js */}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl py-4">

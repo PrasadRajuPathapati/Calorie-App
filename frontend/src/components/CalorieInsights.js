@@ -10,7 +10,7 @@ export default function CalorieInsights() {
   const [dailyCalorieGoal, setDailyCalorieGoal] = useState(0);
   const [todayLog, setTodayLog] = useState(null);
   const [historyLogs, setHistoryLogs] = useState([]);
-  const [message, setMessage] = useState({ type: '', text: '' }); // Keep message state, but ensure it's displayed
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   const token = localStorage.getItem('token');
   const userEmail = localStorage.getItem('email');
@@ -97,8 +97,8 @@ export default function CalorieInsights() {
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex flex-col">
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center p-4">
-        {message.text && ( // NEW: Display the message
-          <p className={`mb-4 text-center font-medium ${message.type === 'error' ? 'text-red-600' : 'text-green-700'}`}>
+        {message.text && ( // Fix: Added message display
+          <p className={`mb-4 text-center font-medium ${message.type === 'error' ? 'text-red-600' : (message.type === 'info' ? 'text-blue-600' : 'text-green-700')}`}>
             {message.text}
           </p>
         )}
