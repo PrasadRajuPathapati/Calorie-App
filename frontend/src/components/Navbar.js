@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Keep useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import logo from "../assets/logo.png";
 import { clearAuthData } from "../utils/authUtils";
@@ -8,15 +8,18 @@ import axios from 'axios';
 const DEFAULT_PROFILE_PIC_FALLBACK = logo;
 
 export default function Navbar() {
-  const navigate = useNavigate(); // Keep useNavigate and use it in handleSignOut
+  const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [userProfilePic, setUserProfilePic] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [ setCurrentTime] = useState(new Date());
+  // REMOVED: currentTime state
+  // const [currentTime, setCurrentTime] = useState(new Date()); 
 
   const profileMenuRef = useRef(null);
   const dropdownRef = useRef(null);
 
+  // REMOVED: Effect to update time every second
+  /*
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -26,6 +29,7 @@ export default function Navbar() {
       clearInterval(timer);
     };
   }, []);
+  */
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -78,7 +82,7 @@ export default function Navbar() {
 
   const handleSignOut = () => {
     clearAuthData();
-    navigate('/login', { replace: true }); // FIX: Use navigate from react-router-dom
+    navigate('/login', { replace: true });
   };
 
   const toggleProfileMenu = () => {
@@ -95,6 +99,7 @@ export default function Navbar() {
             <h1 className="text-2xl md:text-3xl font-extrabold text-green-900 drop-shadow-sm leading-tight mb-0">
               CalorieApp
             </h1>
+            {/* REMOVED: Date and Time Display from here */}
           </div>
         </Link>
       </div>
